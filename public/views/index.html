@@ -60,7 +60,10 @@ var custom_routes = {};
 				</span>
 			</div>
 		</div>
-		<a href="#/" id="site-title">Table Editor</a>
+		<a href="#/" id="site-title">Table Editor <small>(<% session.selected_db || 'default' %>)</small></a>
+        <% FOR db IN db_list %>
+        <a href="/<% base_url%>select/<% db %>"><% db %></a>
+        <% END %>
 	</header>
 		
 	<div id="container" class="container-fluid">

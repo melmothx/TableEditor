@@ -34,14 +34,16 @@ prefix '/api';
 # One schema_info instance per user (because of different permissions)
 sub schema_info {
 	my $username = session('logged_in_user');
-	$schema_info->{$username} ||= TableEdit::Menu->new(
-        schema => schema,
+    my $selected_db = session('selected_db') || 'default';
+	$schema_info->{$username}->{$selected_db} ||= TableEdit::Menu->new(
+        schema => schema($selected_db),
         sort => 1,
         config => config->{TableEditor},
         user_roles => [user_roles],
         column_types => [TableEdit::Config::column_types()],
 	);
-	return $schema_info->{$username};
+    debug to_dumper($schema_info->{$username}->{$selected_db}->schema->storage->connect_info);
+	return $schema_info->{$username}->{$selected_db};
 }
 
 any '**' => sub {

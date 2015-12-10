@@ -25,11 +25,26 @@ TableEdit - TableEditor main module
 =cut
 
 get '/' => sub {
+    my @dbs = keys %{config->{plugins}->{DBIC} || {} };
     template 'index.html', {
-    	base_url => config->{base_url}, 
+    	base_url => config->{base_url},
+        db_list => \@dbs,
     	plugins => TableEdit::Plugins::attr('plugins'),
     };
 };
 
+get '/select/:db' => sub {
+    my $db = params->{db};
+    debug "Trying to select $db";
+    if (exists config->{plugins}->{DBIC}->{$db}) {
+        debug "$db available";
+        session selected_db => $db;
+    }
+    else {
+        session selected_db => 'default';
+        debug "$db not available, using the default";
+    }
+    redirect '/';
+};
 
 true;
